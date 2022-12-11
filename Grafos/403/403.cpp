@@ -1,6 +1,7 @@
 #include <stdlib.h>  // Funcion exit
 #include <string.h>  // Funcion memset
 #include <iostream>  // Variables cin y cout
+#include <list>
 using namespace std;
 
 #define MAX_NODOS 5
@@ -14,6 +15,9 @@ bool G[MAX_NODOS][MAX_NODOS]; // Matriz de adyacencia
 bool visitado[MAX_NODOS];     // Marcas de nodos visitados
 string num1, num2;
 string linea;
+list<int> lista;
+list<int>::iterator EA;
+int sitios;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -40,7 +44,7 @@ void leeGrafo (void){
 		for(int j = 1; j <= MAX_NODOS; j++)
 			G[i][j] = 0;
 		
-	cout << nnodos << endl;
+	//cout << "Nodos " << nnodos << endl;
 	cin.ignore();
 	
 	for (int i = 1; i <= nnodos; i++) {
@@ -56,18 +60,43 @@ void leeGrafo (void){
 
 void bpp(int v){
 	visitado[v]= true;
-	//cout << v << endl;
-	for (int w = 1; w <= nnodos; w++)
+	//cout << "Fila" << v << endl;
+	for (int w = 1; w <= nnodos; w++){
+		//cout << "Columna " << w << ". De la fila " << v << endl;
+		if(lista.back() != v) {
+			lista.push_back(v);
+			//cout << " - añadimos a lista el " << v << endl;
+		}
 		if (!visitado[w] && G[v][w]){
 			bpp(w);
 		}
+	}
 }
 
 void busquedaPP (void){
 	memset(visitado, 0, sizeof(visitado));
+	lista.clear();
 	for (int v = 1; v <= nnodos; v++)
 		if (!visitado[v])
 			bpp(v);
+}
+
+bool puedeSalir(void){	
+	sitios = 0;
+	EA = lista.begin();
+		
+	while(EA != lista.end() && *EA != nnodos){
+		//cout << " *EA " << *EA;
+		EA++;
+		sitios++;
+	}
+	//cout << endl;
+	if(*EA == nnodos){
+		sitios++;
+		cout << "Sitios " << sitios << endl;
+		return true;
+	}else
+		return false;
 }
 
 //////////////////////////////////////////////////////////////
@@ -80,6 +109,10 @@ int main (void){
 	for (int i = 1; i <= ncasos; i++) {
 		cout << "Caso " << i << endl;
 		leeGrafo();
+		lista.push_back(1);
 		busquedaPP();
+		//puedeSalir();
+		if(!puedeSalir())
+			cout << "INFINITO" << endl;
 	}
 }
