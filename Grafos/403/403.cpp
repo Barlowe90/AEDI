@@ -22,7 +22,7 @@ string linea;
 void funcionSeparadora(string linea, string &num1, string &num2){
 	if (linea.length() == 1){
 		num1 = linea[0];
-		num2 = "1";
+		num2 = "0";
 	}else if (linea.length() == 3){
 		num1 = linea[0];
 		num2 = linea[2];
@@ -36,13 +36,10 @@ void leeGrafo (void){
 		exit(0);
 	}
 	
-	//cout << "main " << endl;
-	for(int i = 1; i <= MAX_NODOS; i++){
-		for(int j = 1; j <= MAX_NODOS; j++){
+	for(int i = 1; i <= MAX_NODOS; i++)
+		for(int j = 1; j <= MAX_NODOS; j++)
 			G[i][j] = 0;
-			//cout << "G [" << i << "][" << j << "] = " << G[i][j] << endl; 
-		}
-	}	
+		
 	cout << nnodos << endl;
 	cin.ignore();
 	
@@ -50,18 +47,20 @@ void leeGrafo (void){
 		getline(cin, linea);
 		funcionSeparadora(linea, num1, num2);
 		int c1 = stoi(num1);
+		G[i][c1]= true;
 		int c2 = stoi(num2);
-		//cout << "num1 " << num1 << ". num2 " << num2 << endl;
-		G[c1][c2]= true;
+		if(c2 != 0)
+			G[i][c2]= true;
 	}
 }
 
 void bpp(int v){
 	visitado[v]= true;
-	cout << v << endl;
+	//cout << v << endl;
 	for (int w = 1; w <= nnodos; w++)
-		if (!visitado[w] && G[v][w])
+		if (!visitado[w] && G[v][w]){
 			bpp(w);
+		}
 }
 
 void busquedaPP (void){
@@ -81,12 +80,6 @@ int main (void){
 	for (int i = 1; i <= ncasos; i++) {
 		cout << "Caso " << i << endl;
 		leeGrafo();
-		for(int i = 1; i <= MAX_NODOS; i++){
-			for(int j = 1; j <= MAX_NODOS; j++){
-			//G[i][j] = 0;
-				cout << "G [" << i << "][" << j << "] = " << G[i][j] << endl; 
-			}
-		}
 		busquedaPP();
 	}
 }
