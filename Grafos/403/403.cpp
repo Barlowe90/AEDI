@@ -4,7 +4,7 @@
 #include <list>
 using namespace std;
 
-#define MAX_NODOS 5
+#define MAX_NODOS 20000
 
 //////////////////////////////////////////////////////////////
 ////////////        VARIABLES GLOBALES        ////////////////
@@ -17,7 +17,6 @@ string num1, num2;
 string linea;
 list<int> lista_todos, lista_final;
 list<int>::iterator EA_LT, EA_LF;
-//int sitios;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -84,11 +83,9 @@ void busquedaPP (void){
 }
 
 void puedeSalir(void){	
-	//sitios = 0;
 	EA_LT = lista_todos.begin();
 
 	while(EA_LT != lista_todos.end() && *EA_LT != nnodos){
-		//sitios++;
 		//cout << " *EA_LT " << *EA_LT;
 		lista_final.push_back(*EA_LT);
 		EA_LT++;
@@ -98,14 +95,15 @@ void puedeSalir(void){
 		//cout << " *EA_LT " << *EA_LT;
 	}
 	
-	cout << "Sitios " << lista_final.size() << endl;
+	//cout << "Sitios " << lista_final.size() << endl;
+	cout << lista_final.size() << endl;
 	
 	EA_LF = lista_final.begin();
 	while(EA_LF != lista_final.end()){
 		//cout << " *EA_LF " << *EA_LF;
+		cout << *EA_LF << endl;
 		EA_LF++;
 	}
-	cout << endl;
 }
 
 //////////////////////////////////////////////////////////////
