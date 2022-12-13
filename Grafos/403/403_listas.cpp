@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#define MAX_NODOS 20000
+#define MAX_NODOS 10
 
 //////////////////////////////////////////////////////////////
 ////////////        VARIABLES GLOBALES        ////////////////
@@ -51,32 +51,52 @@ void leeGrafo (void){
 	for (int i = 1; i <= nnodos; i++) {
 		getline(cin, linea);
 		funcionSeparadora(linea, num1, num2);
-		addNodo(G, i, stoi(num1));
-		if (num2 != "0")
-			addNodo(G, i, stoi(num2));
+		int c1 = stoi(num1);
+		int c2 = stoi(num2);
+		if (c2 == 0){
+			addNodo(G, i, c1);
+		}
+		if (c2 != 0 && c2 < c1){
+			addNodo(G, i, c2);
+			addNodo(G, i, c1);
+		}else if (c2 != 0 && c2 > c1){
+			addNodo(G, i, c1);
+			addNodo(G, i, c2);
+		}
 	}
 }
 
 void bpp(int v){
 	visitado[v]= true;
-	for (int i = 1; i <= nnodos; i++){
-		//if (!visitado[i] && elem != 0)
-			//bpp(i);
-	}
+	cout << "Estamos en v: " << v << ". " << endl;
+	
+	for (int w : G[v]){
+		cout << "Recorremos de v: " << v << ". " << endl;
+		cout << "Adyacente w: " << w << endl;
+		if (!visitado[w]){
+			cout << "Adyacente no visitado " << w << endl;
+			bpp(w);
+		}
+		cout << "termina for de w " << w << endl;
+    }
+    cout << "Fin bpp v: " << v << endl;
 }
 
 void busquedaPP (void){
-	memset(visitado, 0, sizeof(visitado));
+	memset(visitado, 0, sizeof(visitado));		// BorrarMarcas
 
-	for (int v = 1; v <= nnodos; v++)
+	for (int v = 1; v <= nnodos; v++){
+		cout << "AH" << endl;
 		if (!visitado[v])
 			bpp(v);
+	}
+	cout << endl;
 }
 
 void mostrarLista(){
     for (int i = 1; i <= MAX_NODOS; i++) {
-        cout << i << "->";
-        for (int& x : G[i])
+        cout << i << " -> ";
+        for (int x : G[i])
             cout << x << " ";
         cout << endl;
     } 
@@ -92,7 +112,7 @@ int main (void){
 	for (int i = 1; i <= ncasos; i++) {
 		cout << "Caso " << i << endl;
 		leeGrafo();
-		//busquedaPP();
-		mostrarLista();
+		busquedaPP();
+		//mostrarLista();
 	}
 }
