@@ -1,7 +1,9 @@
-#include <stdlib.h>  // Funcion exit
-#include <string.h>  // Funcion memset
-#include <iostream>  // Variables cin y cout
+#include <stdlib.h>		// Funcion exit
+#include <string.h>  	// Funcion memset
+#include <iostream>  	// Variables cin y cout
 #include <list>
+#include <queue>
+
 using namespace std;
 
 #define MAX_NODOS 20000
@@ -10,27 +12,16 @@ using namespace std;
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-int nnodos;                   // Numero de nodos del grafo
-bool G[MAX_NODOS][MAX_NODOS]; // Matriz de adyacencia
-bool visitado[MAX_NODOS];     // Marcas de nodos visitados
-string num1, num2;
+int nnodos;                 // Numero de nodos del grafo
+list<int> G[MAX_NODOS]; 	// Lista de adyacencia
+bool visitado[MAX_NODOS];   // Marcas de nodos visitados
 string linea;
-list<int> lista_todos, lista_final;
-list<int>::iterator EA_LT, EA_LF;
+string num = "";
+queue<int> cola;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
 //////////////////////////////////////////////////////////////
-
-void funcionSeparadora(string linea, string &num1, string &num2){
-	if (linea.length() == 1){
-		num1 = linea[0];
-		num2 = "0";
-	}else if (linea.length() == 3){
-		num1 = linea[0];
-		num2 = linea[2];
-	}
-}
 
 void leeGrafo (void){
 	cin >> nnodos;
@@ -39,71 +30,62 @@ void leeGrafo (void){
 		exit(0);
 	}
 	
-	for(int i = 1; i <= MAX_NODOS; i++)
-		for(int j = 1; j <= MAX_NODOS; j++)
-			G[i][j] = 0;
-		
-	//cout << "Nodos " << nnodos << endl;
 	cin.ignore();
+
+	for (int i = 0; i < MAX_NODOS; i++)
+		G[i].clear();
 	
-	for (int i = 1; i <= nnodos; i++) {
+	for(int i = 0; i < nnodos; i++){
 		getline(cin, linea);
-		funcionSeparadora(linea, num1, num2);
-		int c1 = stoi(num1);
-		G[i][c1]= true;
-		int c2 = stoi(num2);
-		if(c2 != 0)
-			G[i][c2]= true;
+
+		for(int j = 0; j <= (int)linea.length(); j++){
+			if(linea[j] == ' ' || j == (int)linea.length()){
+				G[i].push_back(stoi(num));
+				num = "";
+			}else{
+				num = num + linea[j];
+			}
+		}
 	}
 }
 
-void bpp(int v){
+bool bpp(int v){
+	cola.push(v);			// Pablito pinta en el suelo por donde pasa
 	visitado[v]= true;
-	//cout << "Fila" << v << endl;
-	for (int w = 1; w <= nnodos; w++){
-		//cout << "Columna " << w << ". De la fila " << v << endl;
-		if(lista_todos.back() != v) {
-			lista_todos.push_back(v);
-			//cout << " - añadimos a lista el " << v << endl;
-		}
-		if (!visitado[w] && G[v][w]){
-			bpp(w);
-		}
+	
+	list<int>::iterator EA;
+	EA = G[v - 1].begin();
+	//cout << "begin " << *EA << endl;
+	//while(EA != G[v - 1].end() && !visitado[*EA] && *EA == nnodos ){
+	while(EA != G[v - 1].end()){
+		//cout << "*EA de v " << *EA << " " << v << endl;
+		if(*EA == nnodos){
+			cola.push(*EA);
+			return true;
+		}else if(!visitado[*EA]){
+			if(bpp(*EA))
+				return true;
+				cola.push(v);
+		} 
+		EA++;
 	}
+	return false;
 }
 
 void busquedaPP (void){
-	memset(visitado, 0, sizeof(visitado));
-	lista_todos.clear();
-	lista_final.clear();
+	memset(visitado, 0, sizeof(visitado));		// BorrarMarcas
 
-	for (int v = 1; v <= nnodos; v++)
-		if (!visitado[v])
-			bpp(v);
-}
+	while(!cola.empty())
+		cola.pop();
 
-void puedeSalir(void){	
-	EA_LT = lista_todos.begin();
-
-	while(EA_LT != lista_todos.end() && *EA_LT != nnodos){
-		//cout << " *EA_LT " << *EA_LT;
-		lista_final.push_back(*EA_LT);
-		EA_LT++;
-	}
-	if (EA_LT != lista_todos.end()){ 
-		lista_final.push_back(*EA_LT);
-		//cout << " *EA_LT " << *EA_LT;
-	}
-	
-	//cout << "Sitios " << lista_final.size() << endl;
-	cout << lista_final.size() << endl;
-	
-	EA_LF = lista_final.begin();
-	while(EA_LF != lista_final.end()){
-		//cout << " *EA_LF " << *EA_LF;
-		cout << *EA_LF << endl;
-		EA_LF++;
-	}
+	if(bpp(1)){
+		cout << cola.size() << endl;
+		while(!cola.empty()){ 
+			cout << cola.front() << endl;
+			cola.pop();
+		}
+	}else
+		cout << "INFINITO" << endl;
 }
 
 //////////////////////////////////////////////////////////////
@@ -113,12 +95,10 @@ void puedeSalir(void){
 int main (void){
 	int ncasos;
 	cin >> ncasos;
+	
 	for (int i = 1; i <= ncasos; i++) {
 		cout << "Caso " << i << endl;
 		leeGrafo();
 		busquedaPP();
-		puedeSalir();
-		//if(!puedeSalir())
-			//cout << "INFINITO" << endl;
 	}
 }
