@@ -48,26 +48,26 @@ void leeGrafo (void){
 			}
 		}
 	}
-
 }
 
 bool bpp(int v){
-	cola.push(v);
+	cola.push(v);			// Pablito pinta en el suelo por donde pasa
 	visitado[v]= true;
 	
 	list<int>::iterator EA;
 	EA = G[v - 1].begin();
-	
+	//cout << "begin " << *EA << endl;
+	//while(EA != G[v - 1].end() && !visitado[*EA] && *EA == nnodos ){
 	while(EA != G[v - 1].end()){
-	//for(EA = G[v - 1].begin(); EA != G[v - 1].end(); EA++ ){
+		//cout << "*EA de v " << *EA << " " << v << endl;
 		if(*EA == nnodos){
 			cola.push(*EA);
 			return true;
 		}else if(!visitado[*EA]){
 			if(bpp(*EA))
 				return true;
-			cola.push(v);
-		}
+				cola.push(v);
+		} 
 		EA++;
 	}
 	return false;
@@ -110,8 +110,8 @@ int main (void){
 	int ncasos;
 	cin >> ncasos;
 	
-	for (int i = 0; i < ncasos; i++) {
-		cout << "Caso " << i + 1 << endl;
+	for (int i = 1; i <= ncasos; i++) {
+		cout << "Caso " << i << endl;
 		leeGrafo();
 		busquedaPP();
 	}
