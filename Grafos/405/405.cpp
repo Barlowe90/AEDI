@@ -17,7 +17,7 @@ list<int> G[MAX]; 		// Lista de adyacencia
 bool visitado[MAX];		// Marcas de nodos visitados
 string linea;
 string num = "";
-queue<int> cola;
+//queue<int> cola;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -35,7 +35,7 @@ void leeGrafo (void){
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
 	
-	for(int i = 0; i < ntareas; i++){
+	for(int i = 1; i <= ntareas; i++){		
 		getline(cin, linea);
 
 		for(int j = 0; j <= (int)linea.length(); j++){
@@ -49,26 +49,26 @@ void leeGrafo (void){
 	}
 }
 
-void bpp(int v){
-	visitado[v]= true;
+//void bpp(int v){
+	//visitado[v]= true;
 	
-	for (int w = 0; w < ntareas; w++)
-		if (!visitado[w] && G[v][w])
-			bpp(w);
-}
+	//for (int w = 0; w < ntareas; w++)
+		//if (!visitado[w] && G[v][w])
+			//bpp(w);
+//}
 
-void busquedaPP (void){
-	memset(visitado, 0, sizeof(visitado));
+//void busquedaPP (void){
+	//memset(visitado, 0, sizeof(visitado));
 	
-	for (int v = 0; v < ntareas; v++)
-		if (!visitado[v])
-			bpp(v);
-	cout << endl;
-}
+	//for (int v = 0; v < ntareas; v++)
+		//if (!visitado[v])
+			//bpp(v);
+	//cout << endl;
+//}
 
 void mostrarLista(void){
     list<int>::iterator EA;
-    for(int i = 0; i < nnodos; i++){
+    for(int i = 1; i <= ntareas; i++){
         cout << i << " -> ";
         EA = G[i].begin();
         while(EA != G[i].end()){
@@ -87,7 +87,7 @@ int main (void){
 	int ncasos;
 	cin >> ncasos;
 	
-	for (int i = 1; i < ncasos; i++) {
+	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
 		//busquedaPP();
 		mostrarLista();
