@@ -56,10 +56,10 @@ bool bpp(int v){
 	visitado[v]= true;
 	
 	list<int>::iterator EA;
-	//EA = G[v - 1].begin();
+	EA = G[v - 1].begin();
 	
-	//wile(EA != G[v - 1].end()){
-	for(EA = G[v - 1].begin(); EA != G[v - 1].end(); EA++ ){
+	while(EA != G[v - 1].end()){
+	//for(EA = G[v - 1].begin(); EA != G[v - 1].end(); EA++ ){
 		if(*EA == nnodos){
 			cola.push(*EA);
 			return true;
@@ -68,7 +68,7 @@ bool bpp(int v){
 				return true;
 			cola.push(v);
 		}
-		//EA++;
+		EA++;
 	}
 	return false;
 }
