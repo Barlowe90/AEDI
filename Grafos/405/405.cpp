@@ -1,70 +1,95 @@
-#include <stdlib.h>  // Funcion exit
-#include <string.h>  // Funcion memset
-#include <iostream>  // Variables cin y cout
+#include <stdlib.h>		// Funcion exit
+#include <string.h>  	// Funcion memset
+#include <iostream>  	// Variables cin y cout
+#include <list>
+#include <queue>
+
 using namespace std;
 
-#define MAX_NODOS 26
+#define MAX 1000
 
 //////////////////////////////////////////////////////////////
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-int nnodos;                   // Numero de nodos del grafo
-int naristas;                 // Numero de aristas del grafo
-bool G[MAX_NODOS][MAX_NODOS]; // Matriz de adyacencia
-bool visitado[MAX_NODOS];     // Marcas de nodos visitados
+int ntareas;              	// Numero de nodos del grafo
+list<int> G[MAX]; 		// Lista de adyacencia
+bool visitado[MAX];		// Marcas de nodos visitados
+string linea;
+string num = "";
+queue<int> cola;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
 //////////////////////////////////////////////////////////////
 
-void leeGrafo (void)
-// Procedimiento para leer un grafo de la entrada
-{
-  cin >> nnodos >> naristas;
-  if (nnodos<0 || nnodos>MAX_NODOS) {
-    cerr << "Numero de nodos (" << nnodos << ") no valido\n";
-    exit(0);
-  }
-  memset(G, 0, sizeof(G));
-  char c1, c2;
-  for (int i= 0; i<naristas; i++) {
-    cin >> c1 >> c2;
-    G[c1-'A'][c2-'A']= true;
-  }
+void leeGrafo (void){
+	cin >> ntareas;
+	if (ntareas < 0 || ntareas > MAX) {
+		cerr << "Numero de tareas (" << ntareas << ") no valido\n";
+		exit(0);
+	}
+	
+	cin.ignore();
+
+	for (int i = 0; i < MAX; i++)
+		G[i].clear();
+	
+	for(int i = 0; i < ntareas; i++){
+		getline(cin, linea);
+
+		for(int j = 0; j <= (int)linea.length(); j++){
+			if(linea[j] == ' ' || j == (int)linea.length()){
+				G[i].push_back(stoi(num));
+				num = "";
+			}else{
+				num = num + linea[j];
+			}
+		}
+	}
 }
 
-void bpp(int v)
-// Procedimiento recursivo de la busqueda primero en profundidad
-//   v - primer nodo visitado en la bpp
-{
-  visitado[v]= true;
-  cout << char(v+'A');
-  for (int w= 0; w<nnodos; w++)
-    if (!visitado[w] && G[v][w])
-      bpp(w);
+void bpp(int v){
+	visitado[v]= true;
+	
+	for (int w = 0; w < ntareas; w++)
+		if (!visitado[w] && G[v][w])
+			bpp(w);
 }
 
-void busquedaPP (void)
-// Procedimiento principal de la busqueda en profundidad
-{
-  memset(visitado, 0, sizeof(visitado));
-  for (int v= 0; v<nnodos; v++)
-    if (!visitado[v])
-      bpp(v);
-  cout << endl;
+void busquedaPP (void){
+	memset(visitado, 0, sizeof(visitado));
+	
+	for (int v = 0; v < ntareas; v++)
+		if (!visitado[v])
+			bpp(v);
+	cout << endl;
+}
+
+void mostrarLista(void){
+    list<int>::iterator EA;
+    for(int i = 0; i < nnodos; i++){
+        cout << i << " -> ";
+        EA = G[i].begin();
+        while(EA != G[i].end()){
+			cout << *EA << " ";            
+			EA++;
+        }
+        cout << endl;
+    }
 }
 
 //////////////////////////////////////////////////////////////
 ////////////        PROGRAMA PRINCIPAL        ////////////////
 //////////////////////////////////////////////////////////////
 
-int main (void)
-{
-  int ncasos;
-  cin >> ncasos;
-  for (int i= 0; i<ncasos; i++) {
-    leeGrafo();
-    busquedaPP();
-  }
+int main (void){
+	int ncasos;
+	cin >> ncasos;
+	
+	for (int i = 1; i < ncasos; i++) {
+		leeGrafo();
+		//busquedaPP();
+		mostrarLista();
+	}
 }
