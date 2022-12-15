@@ -37,7 +37,7 @@ void leeGrafo (void){
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
 		
-//	memset(tiempos, 0, sizeof(tiempos));
+	memset(tiempos, 0, sizeof(tiempos));
 	
 	for(int i = 1; i <= ntareas; i++){		
 		getline(cin, linea);
