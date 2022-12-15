@@ -19,7 +19,7 @@ string linea;
 string num = "";
 //queue<int> cola;
 int tiempo = 0;
-int tiempos[1001];
+int tiempos[1000];
 	
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
