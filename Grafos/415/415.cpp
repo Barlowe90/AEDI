@@ -12,13 +12,14 @@ using namespace std;
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-int ntareas;              	// Numero de nodos del grafo
+int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
 bool visitado[MAX];		// Marcas de nodos visitados
 string linea;
 string num = "";
 //queue<int> cola;
 int tiempo = 0;
+int tiempos[1001];
 	
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -35,6 +36,8 @@ void leeGrafo (void){
 
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
+		
+//	memset(tiempos, 0, sizeof(tiempos));
 	
 	for(int i = 1; i <= ntareas; i++){		
 		getline(cin, linea);
@@ -43,6 +46,7 @@ void leeGrafo (void){
 			if(linea[j] == ' ' || j == (int)linea.length()){
 				if(tiempo == 0){
 					tiempo = stoi(num);
+					tiempos[i] = tiempo;
 					num = "";
 				}else if(num != "0"){
 					G[i].push_back(stoi(num));
@@ -77,6 +81,7 @@ void mostrarLista(void){
     list<int>::iterator EA;
     for(int i = 1; i <= ntareas; i++){
         cout << i << " -> ";
+        cout << " - tiempo " << tiempos[i] << " . " ;
         EA = G[i].begin();
         while(EA != G[i].end()){
 			cout << *EA << " ";            
@@ -97,6 +102,6 @@ int main (void){
 	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
 		//busquedaPP();
-		//mostrarLista();
+		mostrarLista();
 	}
 }
