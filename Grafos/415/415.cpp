@@ -16,6 +16,7 @@ int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
 int tiempos[1000];
 int gradoEnt[1000];
+int orden[1000];
 //queue<int> cola;
 
 //////////////////////////////////////////////////////////////
@@ -36,7 +37,8 @@ void leeGrafo (void){
 		
 	memset(tiempos, 0, sizeof(tiempos));
 	memset(gradoEnt, 0, sizeof(gradoEnt));
-	
+	memset(orden, 0, sizeof(orden));
+
 	string linea;
 	int tiempo = 0;
 	string num = "";
@@ -63,16 +65,65 @@ void leeGrafo (void){
 	}
 }
 
+void ordenacionTopologica(void){
+	
+	queue<int> cola;
+	while(!cola.empty())
+		cola.pop();
+	
+	int contador = 1;
+		
+	// Metemos en una pila todos las tareas sin predecesores
+	for(int v = 1; v <= ntareas; v++){
+		cout << "Estamos en gradoEnt[v] " << gradoEnt[v] << endl;
+		if(gradoEnt[v] == 0){
+			cout << "cola.push(v) v -> " << v << endl; 
+			cola.push(v);
+		}
+	}
+	
+	while(!cola.empty()){
+		int v = cola.front();
+		cout << "cola.front() " << v << endl;
+		cola.pop();
+		
+		cout << "orden[v] antes contador " << orden[v] << endl;
+		orden[v] = contador;
+		
+		contador++;
+		cout << "orden[v] despues contador " << orden[v] << endl;
+
+		list<int>::iterator w;
+		for(w = G[v].begin(); w != G[v].end(); w++){
+			cout << " ------------- WHILEEEEEEEEEE --------------- " << endl;
+			cout << "estamos dentro for iterador con G[v] (*w) " << *w << endl;
+			cout << "gradoEnt[*w] " << gradoEnt[*w] << endl;
+			gradoEnt[*w]--;
+			cout << "G[*w]-- " << gradoEnt[*w] << endl;
+			if(gradoEnt[*w] == 0){
+				cout << "G[*w] == 0 " <<gradoEnt[*w] << endl;
+				cout << "cola.push[*w] " << endl;
+				cola.push(*w);
+			}
+		}
+	}
+	
+	cout << "Fuera while. Contador " << contador << endl;
+	
+	if (contador <= ntareas)
+		cout << "IMPOSIBLE. Num tareas " << ntareas << endl;
+}
+
 void mostrarLista(void){
     list<int>::iterator EA;
     for(int i = 1; i <= ntareas; i++){
         cout << i << " -> ";
         cout << " - tiempo " << tiempos[i];
-        cout << " - grado Entrada " << G[i].size() << " . " ;
+        cout << " - grado Entrada " << G[i].size() << " . Adyacentes :" ;
         
         EA = G[i].begin();
         while(EA != G[i].end()){
-			cout << *EA << " ";            
+			cout <<  *EA << " ";            
 			EA++;
         }
         cout << endl;
@@ -90,5 +141,6 @@ int main (void){
 	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
 		mostrarLista();
+		//ordenacionTopologica();
 	}
 }
