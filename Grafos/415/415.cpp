@@ -18,7 +18,8 @@ bool visitado[MAX];		// Marcas de nodos visitados
 string linea;
 string num = "";
 //queue<int> cola;
-
+int tiempo = 0;
+	
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
 //////////////////////////////////////////////////////////////
@@ -35,8 +36,6 @@ void leeGrafo (void){
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
 	
-	int tiempo = 0;
-	
 	for(int i = 1; i <= ntareas; i++){		
 		getline(cin, linea);
 
@@ -44,7 +43,6 @@ void leeGrafo (void){
 			if(linea[j] == ' ' || j == (int)linea.length()){
 				if(tiempo == 0){
 					tiempo = stoi(num);
-					cout << "Tiempo " << tiempo << endl;
 					num = "";
 				}else if(num != "0"){
 					G[i].push_back(stoi(num));
@@ -99,6 +97,6 @@ int main (void){
 	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
 		//busquedaPP();
-		mostrarLista();
+		//mostrarLista();
 	}
 }
