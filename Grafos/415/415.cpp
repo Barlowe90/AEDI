@@ -14,13 +14,10 @@ using namespace std;
 
 int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
-bool visitado[MAX];		// Marcas de nodos visitados
-string linea;
-string num = "";
-//queue<int> cola;
-int tiempo = 0;
 int tiempos[1000];
-	
+int gradoEnt[1000];
+//queue<int> cola;
+
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
 //////////////////////////////////////////////////////////////
@@ -38,6 +35,11 @@ void leeGrafo (void){
 		G[i].clear();
 		
 	memset(tiempos, 0, sizeof(tiempos));
+	memset(gradoEnt, 0, sizeof(gradoEnt));
+	
+	string linea;
+	int tiempo = 0;
+	string num = "";
 	
 	for(int i = 1; i <= ntareas; i++){		
 		getline(cin, linea);
@@ -56,32 +58,18 @@ void leeGrafo (void){
 				num = num + linea[j];
 			}
 		}
+		gradoEnt[i] = G[i].size();
 		tiempo = 0;
 	}
 }
-
-//void bpp(int v){
-	//visitado[v]= true;
-	
-	//for (int w = 0; w < ntareas; w++)
-		//if (!visitado[w] && G[v][w])
-			//bpp(w);
-//}
-
-//void busquedaPP (void){
-	//memset(visitado, 0, sizeof(visitado));
-	
-	//for (int v = 0; v < ntareas; v++)
-		//if (!visitado[v])
-			//bpp(v);
-	//cout << endl;
-//}
 
 void mostrarLista(void){
     list<int>::iterator EA;
     for(int i = 1; i <= ntareas; i++){
         cout << i << " -> ";
-        cout << " - tiempo " << tiempos[i] << " . " ;
+        cout << " - tiempo " << tiempos[i];
+        cout << " - grado Entrada " << G[i].size() << " . " ;
+        
         EA = G[i].begin();
         while(EA != G[i].end()){
 			cout << *EA << " ";            
@@ -101,7 +89,6 @@ int main (void){
 	
 	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
-		//busquedaPP();
 		mostrarLista();
 	}
 }
