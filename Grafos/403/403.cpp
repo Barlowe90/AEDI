@@ -62,10 +62,11 @@ bool bpp(int v){
 		if(*EA == nnodos){
 			cola.push(*EA);
 			return true;
-		}else if(!visitado[*EA]){
+		} 
+		if(!visitado[*EA]){
 			if(bpp(*EA))
 				return true;
-				cola.push(v);
+			cola.push(v);
 		} 
 		EA++;
 	}
