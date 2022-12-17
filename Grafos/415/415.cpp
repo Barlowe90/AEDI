@@ -91,26 +91,24 @@ void ordenacionTopologica(void){
 	while(!cola.empty()){
 		int v = cola.front();
 		//cout << "Cogemos la siguiente tarea de la cola: (v) y la sacamos " << v << endl;
-		cola.pop();
-				
+		cola.pop();	
 		contador++;
 		//cout << "orden[v] despues contador " << orden[v] << endl;
 				
-		list<int>::iterator pedrecesor = pedrecesores[v].begin();
+		list<int>::iterator pe;
 		int max = 0;
 		int tiempoPedrecesor = 0;
 		//cout << "tarea " << v + 1 << endl;
-		while(pedrecesor != pedrecesores[v].end()){
-			//cout << "*pedrecesor " << *padre << endl;
-			tiempoPedrecesor = acumulado[*pedrecesor - 1];
-			//cout << "tiempoPedrecesor " << acumulado[*padre - 1] << endl;
+		for(pe = pedrecesores[v].begin(); pe != pedrecesores[v].end(); pe++){
+			//cout << "*pedrecesor " << *pe << endl;
+			tiempoPedrecesor = acumulado[*pe - 1];
+			//cout << "tiempoPedrecesor " << acumulado[*pe - 1] << endl;
 			if(tiempoPedrecesor > max)
 				max = tiempoPedrecesor;
-			pedrecesor++;
 		}
-		
 		//cout << "tiempos[v] " << tiempos[v] << " - max " << max << endl;
 		acumulado[v] = tiempos[v] + max;
+		//cout << "acumulado[v] " << acumulado[v] << endl;
 		
 		list<int>::iterator w;
 		for(w = G[v].begin(); w != G[v].end(); w++){
