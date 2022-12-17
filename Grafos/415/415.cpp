@@ -19,7 +19,6 @@ int gradoEnt[MAX];
 int orden[MAX];
 
 int acumulado[MAX];
-bool sumado[MAX];
 list<int> padres[MAX];
 
 //////////////////////////////////////////////////////////////
@@ -37,13 +36,14 @@ void leeGrafo (void){
 
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
+	
+	for (int i = 0; i < MAX; i++)
+		padres[i].clear();
 		
 	memset(tiempos, 0, sizeof(tiempos));
 	memset(gradoEnt, 0, sizeof(gradoEnt));
 	memset(orden, 0, sizeof(orden));
 	memset(acumulado, 0, sizeof(acumulado));
-	memset(sumado, 0, sizeof(sumado));
-	memset(padres, 0, sizeof(padres));
 
 	string linea;
 	int tiempo = 0;
@@ -83,7 +83,6 @@ void ordenacionTopologica(void){
 	
 	int contador = 1;
 		
-	//cout << " ----------------------------------------------------- " << endl;
 	// Metemos en una pila todos las tareas sin predecesores
 	for(int v = 0; v < ntareas; v++)
 		//cout << "Estamos en gradoEnt[v] " << gradoEnt[v] << ". De la tarea " << v << endl;
@@ -93,49 +92,46 @@ void ordenacionTopologica(void){
 	
 	while(!cola.empty()){
 		int v = cola.front();
-		//cout << "Cogemos la siguiente tarea de la cola: (v) " << v << endl;
+		//cout << "Cogemos la siguiente tarea de la cola: (v) y la sacamos " << v << endl;
 		cola.pop();
-		//cout << "La sacamos" << endl;
 		orden[v] = contador;
 		
 		contador++;
 		//cout << "orden[v] despues contador " << orden[v] << endl;
-		
-		if(!sumado[v]){
-			acumulado[v] = tiempos[v];
-			sumado[v] = true;
+				
+		list<int>::iterator padre = padres[v].begin();
+		int max = 0;
+		int tiempoPadre = 0;
+		//cout << "tarea " << v + 1 << endl;
+		while(padre != padres[v].end()){
+			//cout << "*pedrecesor " << *padre << endl;
+			tiempoPadre = acumulado[*padre - 1];
+			//cout << "tiempoPedrecesor " << acumulado[*padre - 1] << endl;
+			if(tiempoPadre > max)
+				max = tiempoPadre;
+			padre++;
 		}
 		
-		//list<int>::iterator padre;
-		//padre = padres[v].begin();
+		//cout << "tiempos[v] " << tiempos[v] << " - max " << max << endl;
+		acumulado[v] = tiempos[v] + max;
 		
 		list<int>::iterator w;
 		for(w = G[v].begin(); w != G[v].end(); w++){
-			//cout << " ------------- WHILEEEEEEEEEE --------------- " << endl;
 			//cout << "Iteramos con G[v] (*w) " << *w << endl;
 			//cout << "Su gradoEnt[*w] es " << gradoEnt[*w] << endl;
 			gradoEnt[*w]--;
 			//cout << "Quitamos 1 -> G[*w]-- : " << gradoEnt[*w] << endl;
-			if(gradoEnt[*w] == 0){
-				//cout << "Si G[*w] == 0 " <<gradoEnt[*w] << endl;
-				//cout << "Lo metemos en la cola.push[*w] " << endl;
+			if(gradoEnt[*w] == 0)
 				cola.push(*w);	
-				
-				//cout << "*w y ntareas " << *w <<  " " << ntareas << endl;				
-				acumulado[*w] = acumulado[*w] + acumulado[v];
-				acumulado[*w] = acumulado[*w] + tiempos[*w];	
-				//cout << "acu *w" << acumulado[*w] << endl;
-				sumado[*w] = true;
-			}
 		}
 	}
 
 	if (contador <= ntareas)
 		cout << "IMPOSIBLE" << endl;
-	else{
+	else{		
 		int mayor = 0;
 		for(int i = 0; i < ntareas; i++){
-			//cout << "i " << i << ". acum[i] " << acumulado[i] << endl;
+			//cout << "acumulado[i] " << acumulado[i] << endl;
 			if(acumulado[i] > mayor)
 				mayor = acumulado[i];
 		}
