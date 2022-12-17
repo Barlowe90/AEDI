@@ -16,10 +16,9 @@ int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
 int tiempos[MAX];
 int gradoEnt[MAX];
-int orden[MAX];
 
 int acumulado[MAX];
-list<int> padres[MAX];
+list<int> pedrecesores[MAX];
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -38,11 +37,10 @@ void leeGrafo (void){
 		G[i].clear();
 	
 	for (int i = 0; i < MAX; i++)
-		padres[i].clear();
+		pedrecesores[i].clear();
 		
 	memset(tiempos, 0, sizeof(tiempos));
 	memset(gradoEnt, 0, sizeof(gradoEnt));
-	memset(orden, 0, sizeof(orden));
 	memset(acumulado, 0, sizeof(acumulado));
 
 	string linea;
@@ -62,7 +60,7 @@ void leeGrafo (void){
 				}else{
 					if (linea[j] != 0){
 						G[stoi(num) - 1].push_back(i);
-						padres[i].push_back(stoi(num));
+						pedrecesores[i].push_back(stoi(num));
 						gradoEnt[i]++;
 						num = "";
 					}
@@ -94,22 +92,21 @@ void ordenacionTopologica(void){
 		int v = cola.front();
 		//cout << "Cogemos la siguiente tarea de la cola: (v) y la sacamos " << v << endl;
 		cola.pop();
-		orden[v] = contador;
-		
+				
 		contador++;
 		//cout << "orden[v] despues contador " << orden[v] << endl;
 				
-		list<int>::iterator padre = padres[v].begin();
+		list<int>::iterator pedrecesor = pedrecesores[v].begin();
 		int max = 0;
-		int tiempoPadre = 0;
+		int tiempoPedrecesor = 0;
 		//cout << "tarea " << v + 1 << endl;
-		while(padre != padres[v].end()){
+		while(pedrecesor != pedrecesores[v].end()){
 			//cout << "*pedrecesor " << *padre << endl;
-			tiempoPadre = acumulado[*padre - 1];
+			tiempoPedrecesor = acumulado[*pedrecesor - 1];
 			//cout << "tiempoPedrecesor " << acumulado[*padre - 1] << endl;
-			if(tiempoPadre > max)
-				max = tiempoPadre;
-			padre++;
+			if(tiempoPedrecesor > max)
+				max = tiempoPedrecesor;
+			pedrecesor++;
 		}
 		
 		//cout << "tiempos[v] " << tiempos[v] << " - max " << max << endl;
