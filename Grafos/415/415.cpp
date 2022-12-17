@@ -14,10 +14,13 @@ using namespace std;
 
 int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
-int tiempos[1000];
-int gradoEnt[1000];
-int orden[1000];
-//queue<int> cola;
+int tiempos[MAX];
+int gradoEnt[MAX];
+int orden[MAX];
+
+int acumulado[MAX];
+bool sumado[MAX];
+list<int> padres[MAX];
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -38,12 +41,15 @@ void leeGrafo (void){
 	memset(tiempos, 0, sizeof(tiempos));
 	memset(gradoEnt, 0, sizeof(gradoEnt));
 	memset(orden, 0, sizeof(orden));
+	memset(acumulado, 0, sizeof(acumulado));
+	memset(sumado, 0, sizeof(sumado));
+	memset(padres, 0, sizeof(padres));
 
 	string linea;
 	int tiempo = 0;
 	string num = "";
 	
-	for(int i = 1; i <= ntareas; i++){		
+	for(int i = 0; i < ntareas; i++){		
 		getline(cin, linea);
 
 		for(int j = 0; j <= (int)linea.length(); j++){
@@ -55,7 +61,8 @@ void leeGrafo (void){
 					gradoEnt[i] = 0;
 				}else{
 					if (linea[j] != 0){
-						G[stoi(num)].push_back(i);
+						G[stoi(num) - 1].push_back(i);
+						padres[i].push_back(stoi(num));
 						gradoEnt[i]++;
 						num = "";
 					}
@@ -64,7 +71,6 @@ void leeGrafo (void){
 				num = num + linea[j];
 			}
 		}
-		//gradoEnt[i] = G[i].size();
 		tiempo = 0;
 	}
 }
@@ -77,67 +83,64 @@ void ordenacionTopologica(void){
 	
 	int contador = 1;
 		
-	cout << " ----------------------------------------------------- " << endl;
+	//cout << " ----------------------------------------------------- " << endl;
 	// Metemos en una pila todos las tareas sin predecesores
-	for(int v = 1; v <= ntareas; v++){
+	for(int v = 0; v < ntareas; v++)
 		//cout << "Estamos en gradoEnt[v] " << gradoEnt[v] << ". De la tarea " << v << endl;
-		if(gradoEnt[v] == 0){
+		if(gradoEnt[v] == 0)
 			//cout << "cola.push(v) v -> " << v << endl; 
 			cola.push(v);
-		}
-	}
 	
 	while(!cola.empty()){
 		int v = cola.front();
-		cout << "Cogemos la siguiente tarea de la cola: (v) " << v << endl;
+		//cout << "Cogemos la siguiente tarea de la cola: (v) " << v << endl;
 		cola.pop();
-		cout << "La sacamos" << endl;
-		//cout << "orden[v] antes contador " << orden[v] << endl;
+		//cout << "La sacamos" << endl;
 		orden[v] = contador;
 		
 		contador++;
 		//cout << "orden[v] despues contador " << orden[v] << endl;
 		
+		if(!sumado[v]){
+			acumulado[v] = tiempos[v];
+			sumado[v] = true;
+		}
 		
-		cout << "Tiempo de v :" << tiempos[v] << endl;
-
+		//list<int>::iterator padre;
+		//padre = padres[v].begin();
+		
 		list<int>::iterator w;
 		for(w = G[v].begin(); w != G[v].end(); w++){
-			cout << " ------------- WHILEEEEEEEEEE --------------- " << endl;
-			cout << "Iteramos con G[v] (*w) " << *w << endl;
-			cout << "Su gradoEnt[*w] es " << gradoEnt[*w] << endl;
+			//cout << " ------------- WHILEEEEEEEEEE --------------- " << endl;
+			//cout << "Iteramos con G[v] (*w) " << *w << endl;
+			//cout << "Su gradoEnt[*w] es " << gradoEnt[*w] << endl;
 			gradoEnt[*w]--;
-			cout << "Quitamos 1 -> G[*w]-- : " << gradoEnt[*w] << endl;
+			//cout << "Quitamos 1 -> G[*w]-- : " << gradoEnt[*w] << endl;
 			if(gradoEnt[*w] == 0){
-				cout << "Si G[*w] == 0 " <<gradoEnt[*w] << endl;
-				cout << "Lo metemos en la cola.push[*w] " << endl;
-				cola.push(*w);
+				//cout << "Si G[*w] == 0 " <<gradoEnt[*w] << endl;
+				//cout << "Lo metemos en la cola.push[*w] " << endl;
+				cola.push(*w);	
+				
+				//cout << "*w y ntareas " << *w <<  " " << ntareas << endl;				
+				acumulado[*w] = acumulado[*w] + acumulado[v];
+				acumulado[*w] = acumulado[*w] + tiempos[*w];	
+				//cout << "acu *w" << acumulado[*w] << endl;
+				sumado[*w] = true;
 			}
 		}
 	}
-	
-	cout << " ----- FIN ----- WHILEEEEEEEEEE --------------- " << endl;
-	
+
 	if (contador <= ntareas)
 		cout << "IMPOSIBLE" << endl;
-	else
-		cout << "Posible" << endl;
-}
-
-void mostrarLista(void){
-    list<int>::iterator EA;
-    for(int i = 1; i <= ntareas; i++){
-        cout << "Tarea " << i << " -> ";
-        cout << "tiempo " << tiempos[i];
-        cout << " - grado Entrada " << gradoEnt[i] << " . Adyacentes :" ;
-        
-        EA = G[i].begin();
-        while(EA != G[i].end()){
-			cout <<  *EA << " ";            
-			EA++;
-        }
-        cout << endl;
-    }
+	else{
+		int mayor = 0;
+		for(int i = 0; i < ntareas; i++){
+			//cout << "i " << i << ". acum[i] " << acumulado[i] << endl;
+			if(acumulado[i] > mayor)
+				mayor = acumulado[i];
+		}
+		cout << mayor << endl;
+	}
 }
 
 //////////////////////////////////////////////////////////////
@@ -150,7 +153,6 @@ int main (void){
 	
 	for (int i = 0; i < ncasos; i++) {
 		leeGrafo();
-		//mostrarLista();
 		ordenacionTopologica();
 	}
 }
