@@ -16,9 +16,7 @@ int ntareas;            // Numero de nodos del grafo
 list<int> G[MAX]; 		// Lista de adyacencia
 int tiempos[MAX];
 int gradoEnt[MAX];
-
 int acumulado[MAX];
-list<int> pedrecesores[MAX];
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -35,9 +33,6 @@ void leeGrafo (void){
 
 	for (int i = 0; i < MAX; i++)
 		G[i].clear();
-	
-	for (int i = 0; i < MAX; i++)
-		pedrecesores[i].clear();
 		
 	memset(tiempos, 0, sizeof(tiempos));
 	memset(gradoEnt, 0, sizeof(gradoEnt));
@@ -60,14 +55,12 @@ void leeGrafo (void){
 				}else{
 					if (linea[j] != 0){
 						G[stoi(num) - 1].push_back(i);
-						pedrecesores[i].push_back(stoi(num));
 						gradoEnt[i]++;
 						num = "";
 					}
 				}
-			}else{
+			}else
 				num = num + linea[j];
-			}
 		}
 		tiempo = 0;
 	}
@@ -83,39 +76,19 @@ void ordenacionTopologica(void){
 		
 	// Metemos en una pila todos las tareas sin predecesores
 	for(int v = 0; v < ntareas; v++)
-		//cout << "Estamos en gradoEnt[v] " << gradoEnt[v] << ". De la tarea " << v << endl;
 		if(gradoEnt[v] == 0)
-			//cout << "cola.push(v) v -> " << v << endl; 
 			cola.push(v);
 	
 	while(!cola.empty()){
 		int v = cola.front();
-		//cout << "Cogemos la siguiente tarea de la cola: (v) y la sacamos " << v << endl;
 		cola.pop();	
 		contador++;
-		//cout << "orden[v] despues contador " << orden[v] << endl;
 				
-		list<int>::iterator pe;
-		int max = 0;
-		int tiempoPedrecesor = 0;
-		//cout << "tarea " << v + 1 << endl;
-		for(pe = pedrecesores[v].begin(); pe != pedrecesores[v].end(); pe++){
-			//cout << "*pedrecesor " << *pe << endl;
-			tiempoPedrecesor = acumulado[*pe - 1];
-			//cout << "tiempoPedrecesor " << acumulado[*pe - 1] << endl;
-			if(tiempoPedrecesor > max)
-				max = tiempoPedrecesor;
-		}
-		//cout << "tiempos[v] " << tiempos[v] << " - max " << max << endl;
-		acumulado[v] = tiempos[v] + max;
-		//cout << "acumulado[v] " << acumulado[v] << endl;
-		
+		//cout << "tarea " << v << endl;
 		list<int>::iterator w;
 		for(w = G[v].begin(); w != G[v].end(); w++){
-			//cout << "Iteramos con G[v] (*w) " << *w << endl;
-			//cout << "Su gradoEnt[*w] es " << gradoEnt[*w] << endl;
+			acumulado[*w] = max(acumulado[*w], acumulado[v] + tiempos[v]);
 			gradoEnt[*w]--;
-			//cout << "Quitamos 1 -> G[*w]-- : " << gradoEnt[*w] << endl;
 			if(gradoEnt[*w] == 0)
 				cola.push(*w);	
 		}
@@ -125,11 +98,8 @@ void ordenacionTopologica(void){
 		cout << "IMPOSIBLE" << endl;
 	else{		
 		int mayor = 0;
-		for(int i = 0; i < ntareas; i++){
-			//cout << "acumulado[i] " << acumulado[i] << endl;
-			if(acumulado[i] > mayor)
-				mayor = acumulado[i];
-		}
+		for(int i = 0; i < ntareas; i++)
+			mayor = max(mayor, acumulado[i] + tiempos[i]);
 		cout << mayor << endl;
 	}
 }
